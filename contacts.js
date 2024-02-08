@@ -38,15 +38,15 @@ export async function listContacts() {
     }
   }
 
- export async function removeContact(contactId) {
+  export async function removeContact(contactId) {
     try {
       const contacts = await listContacts();
-      const removedContact = contacts.find((contact) => contact.id === contactId);
-      if (!removedContact) {
+      const removedIndex = contacts.findIndex((contact) => contact.id === contactId);
+      if (removedIndex === -1) {
         return null;
       }
-      const updatedContacts = contacts.filter((contact) => contact.id !== contactId);
-      await fs.writeFile(contactsPath, JSON.stringify(updatedContacts, null, 2));
+      const removedContact = contacts.splice(removedIndex, 1)[0]; 
+      await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
       return removedContact;
     } catch (error) {
       throw new Error(`Помилка при записі файлу: ${error.message}`);
